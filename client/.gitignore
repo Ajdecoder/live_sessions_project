@@ -1,0 +1,71 @@
+# =========================
+# Node
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# =========================
+# Environment
+# =========================
+.env
+.env.local
+.env.*.local
+*.env
+
+# =========================
+# Logs
+# =========================
+logs
+*.log
+logs/*
+debug.log
+error.log
+*.log.*
+
+# =========================
+# Build Outputs
+# =========================
+dist/
+build/
+out/
+
+# =========================
+# Vite
+# =========================
+.vite/
+.vite-deps/
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Coverage / Testing
+# =========================
+coverage/
+*.lcov
+
+# =========================
+# Optional
+# =========================
+*.pid
+*.seed
+*.tgz
+*.zip
+*.tar
