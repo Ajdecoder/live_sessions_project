@@ -18,18 +18,22 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/live_sessio
   .then(() => console.log(" Mongo connected"))
   .catch(err => console.log(" Mongo error:", err));
 
+app.get('/', (req,res) => {
+  res.send({ message: 'server is up and running' })
+})
+
 app.post('/api/sessions', async (req, res) => {
-  const unique_id = uuidv4().slice(0,8);
+  const unique_id = uuidv4().slice(0, 8);
   const userurl = `${req.body.baseUrl || req.protocol + '://' + req.get('host')}/session/${unique_id}`;
-  const session = new LiveSession({ type:'admin', unique_id, userurl });
+  const session = new LiveSession({ type: 'admin', unique_id, userurl });
   await session.save();
-  res.json({ ok:true, session });
+  res.json({ ok: true, session });
 });
 
-app.get('/api/sessions/:unique_id', async (req,res)=>{
-  const s = await LiveSession.findOne({ unique_id:req.params.unique_id });
-  if(!s) return res.status(404).json({ ok:false });
-  res.json({ ok:true, session:s });
+app.get('/api/sessions/:unique_id', async (req, res) => {
+  const s = await LiveSession.findOne({ unique_id: req.params.unique_id });
+  if (!s) return res.status(404).json({ ok: false });
+  res.json({ ok: true, session: s });
 });
 
 io.on('connection', (socket) => {
