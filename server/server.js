@@ -11,11 +11,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-app.use(cors({
-  origin: ["https://live-sessions-project.vercel.app"],
+const corsOptions = {
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/live_sessions_db')
