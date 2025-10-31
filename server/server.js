@@ -11,14 +11,18 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-app.use(cors());
+app.use(cors({
+  origin: ["https://live-sessions-project.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/live_sessions_db')
   .then(() => console.log(" Mongo connected"))
   .catch(err => console.log(" Mongo error:", err));
 
-app.get('/', (req,res) => {
+app.get('/', (req, res) => {
   res.send({ message: 'server is up and running' })
 })
 
