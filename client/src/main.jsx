@@ -2,9 +2,9 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App'
-import Admin from './Admin'
-import Student from './Student'
 import './index.css'
+import Admin from './components/Admin'
+import Student from './components/Student'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

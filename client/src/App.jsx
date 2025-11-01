@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Admin from './Admin'
+import Admin from './components/Admin'
 
 export default function App(){
   return (

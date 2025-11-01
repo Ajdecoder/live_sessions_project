@@ -14,7 +14,7 @@ export default function Student() {
 
   useEffect(() => {
     socketRef.current = io(SERVER)
-    
+
     socketRef.current.on('connect', () => {
       setIsConnected(true)
     })
@@ -44,10 +44,20 @@ export default function Student() {
     pcRef.current = pc
 
     pc.ontrack = ev => {
-      console.log("Track received")
-      setIsVideoLoading(true)
-      videoRef.current.srcObject = ev.streams[0]
-    }
+      console.log("Track received");
+      setIsVideoLoading(true);
+
+      const stream = ev.streams[0];
+      videoRef.current.srcObject = stream;
+
+      setTimeout(() => {
+        videoRef.current
+          .play()
+          .then(() => console.log("Student stream playing"))
+          .catch(err => console.error("Autoplay blocked:", err));
+      }, 200);
+    };
+
 
     pc.onicecandidate = e => {
       if (e.candidate) socketRef.current.emit("ice-candidate", { roomId, candidate: e.candidate })
@@ -59,14 +69,26 @@ export default function Student() {
     socketRef.current.emit("student-ready")
 
     socketRef.current.on("offer", async ({ offer }) => {
-      console.log("Offer received")
-      await pc.setRemoteDescription(offer)
+      console.log("Offer received");
+      await pc.setRemoteDescription(offer);
 
-      const answer = await pc.createAnswer()
-      await pc.setLocalDescription(answer)
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
 
-      socketRef.current.emit("answer", { roomId, answer })
-    })
+      socketRef.current.emit("answer", { roomId, answer });
+
+      // If track already arrived earlier
+      const receivers = pc.getReceivers();
+      const track = receivers.find(r => r.track && r.track.kind === "video");
+
+      if (track) {
+        let newStream = new MediaStream([track.track]);
+        videoRef.current.srcObject = newStream;
+
+        videoRef.current.play().catch(err => console.log("play retry:", err));
+      }
+    });
+
 
     socketRef.current.on("ice-candidate", async ({ candidate }) => {
       await pc.addIceCandidate(candidate)
@@ -96,11 +118,10 @@ export default function Student() {
                 </div>
               </div>
               <div className="text-right">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  isConnected 
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                    : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                }`}>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${isConnected
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                  }`}>
                   {isConnected ? 'Connected' : 'Disconnected'}
                 </span>
               </div>
@@ -112,7 +133,7 @@ export default function Student() {
             <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
               <h3 className="text-lg font-semibold flex items-center">
                 <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <circle cx="10" cy="10" r="3"/>
+                  <circle cx="10" cy="10" r="3" />
                 </svg>
                 Live Stream
               </h3>
@@ -134,18 +155,20 @@ export default function Student() {
                 </div>
               </div>
             </div>
-            
+
             <div className="aspect-video bg-black relative">
+
               <video
                 ref={videoRef}
                 autoPlay
-                controls
+                muted
                 playsInline
                 onLoadedData={handleVideoLoad}
                 onError={handleVideoError}
                 className="w-full h-full object-cover"
               />
-              
+
+
               {isVideoLoading && (
                 <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
                   <div className="text-center">
