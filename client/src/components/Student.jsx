@@ -77,16 +77,6 @@ export default function Student() {
 
       socketRef.current.emit("answer", { roomId, answer });
 
-      // If track already arrived earlier
-      const receivers = pc.getReceivers();
-      const track = receivers.find(r => r.track && r.track.kind === "video");
-
-      if (track) {
-        let newStream = new MediaStream([track.track]);
-        videoRef.current.srcObject = newStream;
-
-        videoRef.current.play().catch(err => console.log("play retry:", err));
-      }
     });
 
 
