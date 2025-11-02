@@ -152,6 +152,7 @@ export default function Student() {
                 ref={videoRef}
                 autoPlay
                 muted
+                controls
                 playsInline
                 onLoadedData={handleVideoLoad}
                 onError={handleVideoError}
